@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Models\Tree;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\TreeResource;
+use App\Http\Resources\TreeResourceCollection;
 
 class TreeApiController extends Controller
 {
@@ -13,19 +15,9 @@ class TreeApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): TreeResourceCollection
     {
-        return Tree::all();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return new TreeResourceCollection(Tree::paginate());
     }
 
     /**
@@ -36,7 +28,13 @@ class TreeApiController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $valid = $request->validate([
+            'title' => 'required',
+        ]);
+
+        $tree = Tree::create($valid);
+
+        return new TreeResource($tree);
     }
 
     /**
@@ -47,22 +45,7 @@ class TreeApiController extends Controller
      */
     public function show(Tree $tree)
     {
-        return [
-            "id" => $tree->id,
-            "title" => $tree->title,
-            "branches" => $tree->branches
-        ];
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Tree  $tree
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Tree $tree)
-    {
-        //
+        return new TreeResource($tree);
     }
 
     /**
@@ -72,9 +55,11 @@ class TreeApiController extends Controller
      * @param  \App\Tree  $tree
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tree $tree)
+    public function update(Request $request, Tree $tree): TreeResource
     {
-        //
+        $tree->title = $request->title ? $request->title : $tree->title;
+        $tree->save();
+        return new TreeResource($tree);
     }
 
     /**

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Models\Branch;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BranchResource;
+use App\Http\Resources\BranchResourceCollection;
 
 class BranchApiController extends Controller
 {
@@ -15,17 +17,7 @@ class BranchApiController extends Controller
      */
     public function index()
     {
-        return Branch::all();
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return new BranchResourceCollection(Branch::paginate());
     }
 
     /**
@@ -36,30 +28,27 @@ class BranchApiController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $valid = $request->validate([
+            'body' => 'required',
+            'tree_id' => 'required',
+        ]);
+
+        $branch = Branch::create($valid);
+
+        return new BranchResource($branch);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  \App\Branch  $branch
-     * @return \Illuminate\Http\Response
+     * @return BranchResource
      */
-    public function show(Branch $branch)
+    public function show(Branch $branch): BranchResource
     {
-        return $branch;
+        return new BranchResource($branch);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Branch  $branch
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Branch $branch)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -68,9 +57,11 @@ class BranchApiController extends Controller
      * @param  \App\Branch  $branch
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Branch $branch)
+    public function update(Request $request, Branch $branch): BranchResource
     {
-        //
+        $branch->body = $request->body ? $request->body : $branch->body;
+        $branch->save();
+        return new BranchResource($branch);
     }
 
     /**
