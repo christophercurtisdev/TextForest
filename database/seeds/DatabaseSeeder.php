@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\Tree;
+use App\Models\Branch;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,6 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $trees = factory(App\Models\Tree::class, 3)->make();
+        $this->call(TreeTableSeeder::class);
+        $this->call(BranchTableSeeder::class);
     }
 }

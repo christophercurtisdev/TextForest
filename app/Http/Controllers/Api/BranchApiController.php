@@ -47,7 +47,7 @@ class BranchApiController extends Controller
      */
     public function show(Branch $branch)
     {
-        //
+        return $branch;
     }
 
     /**
