@@ -70,6 +70,8 @@ class TreeApiController extends Controller
      */
     public function destroy(Tree $tree)
     {
-        //
+        $tree->delete();
+
+        return response()->json();
     }
 }

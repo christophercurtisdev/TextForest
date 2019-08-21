@@ -72,6 +72,8 @@ class BranchApiController extends Controller
      */
     public function destroy(Branch $branch)
     {
-        //
+        $branch->delete();
+
+        return response()->json();
     }
 }
